@@ -4,3 +4,11 @@ export const gameClick = (pos) => {
         payload: pos
     }
 }
+
+export const sendWinner = (player) => {
+    console.log(player)
+    return {
+        type: "CHECK",
+        payload: player
+    }
+}

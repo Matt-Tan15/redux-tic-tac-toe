@@ -1,21 +1,30 @@
 const initialState = {
     player: 'X',
     board: Array(9).fill(''),
-    winner: false
+    winner: null
 };
 
 export const ticTacToeReducer = (state = initialState, action) => {
-    if (action.type === "CLICK") {
-        if (state.board[action.payload] === '') {
-            console.log(action)
+    if (action.type === 'CLICK') {
+        if (state.player === 'X' && state.board[action.payload] === '') {
+            const copy = [...state.board];
+            copy[action.payload] = 'X';
             return {
                 ...state,
-                board: state.player === 'X' ? state.board[action.payload] = 'X' : state.board[action.payload] = 'O',
-                player: state.player === 'X' ? state.player = 'O' : state.player = 'X'
+                board: copy,
+                player: 'O'
             }
-        } else return state;
-    } else if (action.type === "RESTART") {
-
+        } else if (state.player === 'O' && state.board[action.payload] === ''){
+            const copy = [...state.board];
+            copy[action.payload] = 'O';
+            return {
+                ...state,
+                board: copy,
+                player: 'X'
+            }
+        }
+    } else if (action.type === "CHECK") {
+        console.log('won')
     }
 
     return state;
