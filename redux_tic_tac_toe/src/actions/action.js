@@ -12,3 +12,9 @@ export const sendWinner = (player) => {
         payload: player
     }
 }
+
+export const restartGame = () => {
+    return {
+        type: "RESTART"
+    }
+}

@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { gameClick, sendWinner } from "../actions/action";
+import { gameClick, sendWinner, restartGame } from "../actions/action";
+import { useEffect } from "react";
 
 const TicTacToe = () => {
   const dispatch = useDispatch();
@@ -8,46 +9,42 @@ const TicTacToe = () => {
   const board = useSelector((state) => state.board);
   const winner = useSelector((state) => state.winner);
 
-  const combos = {
-    horizontal: [
+  const combos = [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
-    ],
-    vertical: [
       [0, 3, 6],
       [1, 4, 7],
       [2, 5, 8],
-    ],
-    diagonal: [
       [0, 4, 8],
       [2, 4, 6],
-    ],
-  };
+  ];
 
   function Cell(props) {
     return (
-      <td onClick={() => dispatch(gameClick(props.num))}>{board[props.num]}</td>
+      <td onClick={() => {
+        if (board[props.num] || winner) return;
+        dispatch(gameClick(props.num))
+      }}>{board[props.num]}</td>
     );
   };
 
   function checkForWinner(currBoard) {
-    for (let i in combos) {
-      combos[i].forEach((pattern) => {
-        if (currBoard[pattern[0]] === "" || currBoard[pattern[1]] === "" || currBoard[pattern[2]] === "") {
+    combos.forEach((pattern) => {
+      if (currBoard[pattern[0]] === "" || currBoard[pattern[1]] === "" || currBoard[pattern[2]] === "") {
 
-        } else if (currBoard[pattern[0]] === currBoard[pattern[1]] && currBoard[pattern[1]] === currBoard[pattern[2]]) {
-          dispatch(sendWinner(currBoard[pattern[0]]));
-        } else if (!currBoard.includes('') && !winner) {
-          dispatch(sendWinner('Tie'));
-        }
-      })
-    }
+      } else if (currBoard[pattern[0]] === currBoard[pattern[1]] && currBoard[pattern[1]] === currBoard[pattern[2]]) {
+        dispatch(sendWinner(currBoard[pattern[0]]));
+      } 
+      else if (!currBoard.includes('') && !winner) {
+        dispatch(sendWinner('Tie'));
+      }
+    })
   }
 
-  if (!board.every((tile) => tile === '')) {
+  useEffect(() => {
     checkForWinner(board);
-  }
+  }, [board]);
 
   return (
     <div className="container">
@@ -75,13 +72,13 @@ const TicTacToe = () => {
       {winner === "Tie" && (
         <>
           <h5>{winner}!!</h5>
-          <button>Play Again</button>
+          <button onClick={() => dispatch(restartGame())}>Play Again</button>
         </>
       )}
       {winner !== "Tie" && winner && (
         <>
           <h5>Winner: Player {winner}</h5>
-          <button>Play Again</button>
+          <button onClick={() => dispatch(restartGame())}>Play Again</button>
         </>
       )}
     </div>
